@@ -25,3 +25,18 @@ async function foodRequest(routeInfo, params, self) {
       throw err
     }
   };
+
+class Requests {
+  constructor(url, apiKey) {
+    this.url = url;
+    this.headers = {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey
+    };
+  }
+  //Allows setting a different url than the default from which to create and accept RPC connections
+  setUrl(url) {
+    this.url = url;
+  }
+  setApiKey(apiKey) {
+    this.headers["x-api-key"] = apiKey;
