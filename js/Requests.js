@@ -1,15 +1,9 @@
 const fetch = require('node-fetch')
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
 var apiPath = 'https://api.edamam.com/search?q=chicken&';
 var appId = '&app_id=2adada35'; 
 var appKey = '&app_key=32fb87e1fb6b4070a2f81e1c3cdfe085'; 
-
-var json = '{"name": "Peter", "age": 22, "country": "United States"}';
-
-// Converting JSON-encoded string to JS object
-var obj = JSON.parse(json);
-console.log(obj.name); 
-
 function foodRequest(callback) {
 
   // const payload = {
@@ -26,6 +20,7 @@ function foodRequest(callback) {
   Http.onreadystatechange = function() {
     if (Http.readyState === 4 && Http.status === 200 && callback) callback(Http.responseText); 
   }
+
   Http.open("GET", url, true);
   Http.send(); 
 }
@@ -47,10 +42,10 @@ class Requests {
 
 }
 
-const test = new Requests("https://api.edamam.com/search?q=chicken&app_id=${YOUR_APP_ID}&app_key=${YOUR_APP_KEY}&from=0&to=1"); 
-foodRequest(function(response){
-  handleResponse(JSON.parse(response)); 
-});
+  const test = new Requests("https://api.edamam.com/search?q=chicken&app_id=${YOUR_APP_ID}&app_key=${YOUR_APP_KEY}&from=0&to=1"); 
+  foodRequest(function(response){
+    handleResponse(JSON.parse(response)); 
+  });
 
 function handleResponse(response){
   //console.log(response);
@@ -59,17 +54,21 @@ function handleResponse(response){
   //for(const property in hits){
      //console.log('${property}: ${object[property]}');
   // }
-  
-  var recipeNameLink = {
-    table: []
-  };
+
+  var myObj = {}; 
 
 //iterating through the array of recipes
-  hits.forEach(element => (recipeNameLink.table.push({recipeTitle : element.recipe.label, url: element.recipe.url}))); 
-  console.log(obj); 
+  hits.forEach(element => (myObj[element.recipe.label] = element.recipe.url)); 
+
+  console.log(JSON.stringify(myObj)); 
 
   // return the table of recipe titles and url
-  return recipeNameLink; 
-  
-}
 
+  var fileString = JSON.stringify(recipeNameLink);
+  var fs = require('fs');
+  fs.writeFile("data.json", fileString); 
+
+  // fs.readFile('data.json'), function(data){
+  //   console.log(data); 
+  // }
+}
