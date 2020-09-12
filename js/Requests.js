@@ -1,42 +1,44 @@
 const fetch = require('node-fetch')
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-async function foodRequest(routeInfo, params, self) {
-    try {
-      const route = routeInfo.route;
-      const body = {
-        jsonrpc: "2.0",
-        id: routeInfo.id || "1",
-        method: routeInfo.method,
-        params: [
-          { ...params }
-        ]
-      };
-      const payload = {
-        url: self.url + route,
-        method: "POST",
-        headers: self.headers,
-        body: JSON.stringify(body)
-      };
-      const response = await (await fetch(self.url + route, payload)).json();
-      if (response.error) { throw response }
-      else { return response }
-  
-    } catch (err) {
-      throw err
-    }
+function foodRequest(self) {
+
+  const payload = {
+    url: self.url,
+    method: "GET",
+    headers: self.headers
   };
+//possible issue: undefined is printed
+const Http = new XMLHttpRequest();
+const url=self.url;
+Http.open("GET", url);
+Http.send();
+
+
+Http.onreadystatechange = (e) => {
+  console.log(Http.responseText)
+}
+}
+
+
 
 class Requests {
-  constructor(url, apiKey) {
+  constructor(url, apiKey, appID) {
     this.url = url;
-    this.headers = {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey
-    };
   }
-  //Allows setting a different url than the default from which to create and accept RPC connections
+
   setUrl(url) {
     this.url = url;
   }
   setApiKey(apiKey) {
-    this.headers["x-api-key"] = apiKey;
+    this.headers["app_key"] = apiKey;
+  }
+  setAppId(appId){
+      this.headers['app_id'] = appId
+  }
+
+}
+
+const test = new Requests("https://api.edamam.com/search?q=chicken&app_id=2adada35&app_key=32fb87e1fb6b4070a2f81e1c3cdfe085&from=0&to=3&calories=591-722&health=alcohol-free")
+
+console.log(foodRequest(test));
